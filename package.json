@@ -1,0 +1,38 @@
+{
+  "name": "nodejs-api-boilerplate",
+  "version": "0.0.1",
+  "description": "",
+  "main": "src/app.ts",
+  "scripts": {
+    "dev": "ts-node -r dotenv/config -P tsconfig.json src/server.ts",
+    "start": "node -r dotenv/config build/server.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vitorskm/nodejs-api-boilerplate.git"
+  },
+  "keywords": [
+    "nodejs",
+    "api",
+    "boilerplate",
+    "structure"
+  ],
+  "author": "Vitor Araujo",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/vitorskm/nodejs-api-boilerplate/issues"
+  },
+  "homepage": "https://github.com/vitorskm/nodejs-api-boilerplate#readme",
+  "dependencies": {
+    "@types/body-parser": "^1.19.0",
+    "@types/express": "^4.17.7",
+    "@types/reflect-metadata": "^0.1.0",
+    "dotenv": "^8.2.0",
+    "eslint": "^7.4.0",
+    "express": "^4.17.1",
+    "reflect-metadata": "^0.1.13",
+    "ts-node": "^8.10.2",
+    "typescript": "^3.9.7"
+  }
+}
