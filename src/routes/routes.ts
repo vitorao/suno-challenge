@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import TimeRulesController from '../controllers/timeRules/timeRulesController';
 
 import { RouteDefinition } from '../decorators/types/routeDefinition';
+import { constructorList } from './constructorList';
 
 export default class Routes {
 
@@ -9,7 +10,7 @@ export default class Routes {
     [
       TimeRulesController,
     ].forEach(controller => {
-      const instance = new controller();
+      const instance = new controller(constructorList(controller.name));
       const prefix = Reflect.getMetadata('prefix', controller);
       const routes: Array<RouteDefinition> = Reflect.getMetadata('routes', controller);
 
