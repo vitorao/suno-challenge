@@ -1,6 +1,6 @@
-import { userRoutesControllers } from '../../controllers/userControllers/IUserRoutes';
+import { timeRulesRoutesControllers } from '../../controllers/timeRules/ITimeRulesRoutes';
 
-export type AllControllers = userRoutesControllers;
+export type AllControllers = timeRulesRoutesControllers;
 
 export interface RouteDefinition {
   path: string;

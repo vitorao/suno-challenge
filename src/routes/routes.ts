@@ -1,13 +1,13 @@
 import { Request, Response } from 'express';
+import TimeRulesController from '../controllers/timeRules/timeRulesController';
 
-import UserController from '../controllers/userControllers/userController';
 import { RouteDefinition } from '../decorators/types/routeDefinition';
 
 export default class Routes {
 
   constructor(app: any){
     [
-      UserController
+      TimeRulesController,
     ].forEach(controller => {
       const instance = new controller();
       const prefix = Reflect.getMetadata('prefix', controller);
