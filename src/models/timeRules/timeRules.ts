@@ -63,6 +63,11 @@ export default class TimeRulesModel {
 
     return false;
   }
+
+  public async listAllTimeRules(): Promise<ITimeRules[]> {
+    const databaseValues = await this.getFileData();
+    return databaseValues.rules;
+  }
 }
 
 export interface IIntervals {

@@ -51,8 +51,9 @@ export default class TimeRulesController {
   }
 
   @Get('/')
-  public listAllTimeRules(_req: Request, res: Response) {
-    return res.send('listAllTimeRules');
+  public async listAllTimeRules(_req: Request, res: Response) {
+    const rules = await this.timeRulesModel.listAllTimeRules();
+    res.json(rules);
   }
 
   @Get('/availables')
