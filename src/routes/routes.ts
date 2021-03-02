@@ -10,7 +10,7 @@ export default class Routes {
     [
       TimeRulesController,
     ].forEach(controller => {
-      const instance = new controller(constructorList(controller.name));
+      const instance = constructorList(controller.name, controller);
       const prefix = Reflect.getMetadata('prefix', controller);
       const routes: Array<RouteDefinition> = Reflect.getMetadata('routes', controller);
 
