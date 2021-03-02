@@ -35,8 +35,19 @@ export default class TimeRulesController {
   }
 
   @Delete('/:id')
-  public deleteTimeRule(_req: Request, res: Response) {
-    return res.send('deleteTimeRule');
+  public async deleteTimeRule(req: Request, res: Response) {
+    try {
+      const id = req.params.id;
+
+      if(!id) {
+        return res.json({ message: "missing param id" }).sendStatus(400);   
+      }
+
+      const success = await this.timeRulesModel.deleteTimeRule(id);
+      res.json({ success });
+    } catch (error) {
+      return res.send('Bad request').sendStatus(400);  
+    }
   }
 
   @Get('/')

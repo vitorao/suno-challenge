@@ -33,6 +33,12 @@ export default class TimeRulesModel {
     return timeRuleId;
   }
 
+  private async updateTimeRules(data: ITimeRules[]) {
+    fs.writeFile(this.databaseFileName, JSON.stringify({rules: data}), err => {
+      if(err) throw new Error('Error on save file')
+    });
+  }
+
   public async inserTimeRule(timeRules: ITimeRules): Promise<string> {
     try {
       const id = await this.addToDB(timeRules);
@@ -42,6 +48,20 @@ export default class TimeRulesModel {
     } catch (error) {
       throw new Error('Error to save rules on DataBase')
     }
+  }
+
+  public async deleteTimeRule(ruleId: string): Promise<Boolean> {
+    const databaseValues = await this.getFileData();
+    const ruleIndex = databaseValues.rules.map((rule, index) => 
+      ruleId === rule.id ? index : null)[0];
+
+    if(ruleIndex || ruleIndex === 0) {
+      databaseValues.rules.splice(ruleIndex, 1);
+      await this.updateTimeRules(databaseValues.rules);
+      return true;
+    }
+
+    return false;
   }
 }
 
