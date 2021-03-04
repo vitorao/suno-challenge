@@ -1,4 +1,4 @@
-import CheckTimeConflict from "../models/timeRules/checkTimeConflicts";
+import { CheckTimeConflict } from "../controllers/timeRules/checkTimeConflicts";
 import TimeRulesModel from "../models/timeRules/timeRules";
 
 export const constructorList = (type: string, controller: any) => {

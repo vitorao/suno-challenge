@@ -7,7 +7,15 @@ export default class TimeRulesModel {
 
   constructor() {}
 
-  private listOfdaysOfWeek = ["sunday", "monday", "tuesday", "wendnesday", "thursday", "friday", "saturday"];
+  private listOfdaysOfWeek = [
+    DaysOfWeek.sunday,
+    DaysOfWeek.monday,
+    DaysOfWeek.tuesday,
+    DaysOfWeek.wendnesday,
+    DaysOfWeek.thursday,
+    DaysOfWeek.friday,
+    DaysOfWeek.saturday
+  ];
   private databaseFileName = path.join(__dirname, '..','database.json');
 
   public async getFileData(): Promise<{ rules: ITimeRules[] }> {
@@ -27,7 +35,7 @@ export default class TimeRulesModel {
       ...data,
       id: timeRuleId,
     });
-    
+
     fs.writeFile(this.databaseFileName, JSON.stringify(databaseValues), err => {
       if(err) throw new Error('Error on save file')
     });
@@ -75,14 +83,16 @@ export default class TimeRulesModel {
   private listUniqueRule(rule: ITimeRules, start: moment.Moment, end: moment.Moment): ITimeRulesResponse[] {
     let timeRulesUnique: ITimeRulesResponse[] = [];
     const isBetweenDates = moment(rule.date, "DD-MM-YYYY").isBetween(start, end, 'day', "[]");
-    
-    if(rule.type === 'unique' && isBetweenDates) {
-      timeRulesUnique.push({
-        day: rule.date,
-        intervals: rule.intervals
-      });
+
+    if(rule.type !== TypeRules.unique || !isBetweenDates || rule.date === null) {
+      throw new Error('Invalid rule data');
     }
-    
+
+    timeRulesUnique.push({
+      day: rule.date,
+      intervals: rule.intervals
+    });
+
     return timeRulesUnique;
   }
 
@@ -107,10 +117,10 @@ export default class TimeRulesModel {
 
     for(let n = 0; n < daysBetweenDays; n++) {
       const nextDay = moment(start, "DD-MM-YYYY").add(n, 'days').format("DD-MM-YYYY");
-      const weekday = moment(nextDay, "DD-MM-YYYY").weekday();
+      const weekday: TypeRules = moment(nextDay, "DD-MM-YYYY").weekday();
       const hasDayOfWeek = rule.daysOfWeek && !!rule.daysOfWeek.filter(day => 
         this.listOfdaysOfWeek[weekday] === day).length; 
-      
+
       if(hasDayOfWeek) {
         timeRulesWeekly.push({
           day: nextDay,
@@ -130,15 +140,15 @@ export default class TimeRulesModel {
 
     databaseValues.rules.map(rule => {
       switch(rule.type) {
-        case 'unique':
+        case TypeRules.unique:
           const uniqueList = this.listUniqueRule(rule, momentStart, momentEnd);
           timeRulesResponse = timeRulesResponse.concat(uniqueList);
           break;
-        case 'daily':
+        case TypeRules.daily:
           const dailyList = this.listDailyRule(rule, momentStart, momentEnd);
           timeRulesResponse = timeRulesResponse.concat(dailyList);
           break;
-        case 'weekly':
+        case TypeRules.weekly:
           const weeklyList = this.listWeeklyRule(rule, momentStart, momentEnd);
           timeRulesResponse = timeRulesResponse.concat(weeklyList);
           break;
@@ -154,14 +164,27 @@ export interface IIntervals {
   end: string
 }
 
-type TypeRules = "weekly" | "daily" | "unique";
-type DaysOfWeek = "monday" | "tuesday" | "wendnesday" | "thursday" | "friday" | "saturday" | "sunday";
+export enum TypeRules {
+  weekly,
+  daily,
+  unique
+};
+
+export enum DaysOfWeek {
+  monday,
+  tuesday,
+  wendnesday,
+  thursday,
+  friday,
+  saturday,
+  sunday
+};
 
 export interface ITimeRules {
   id: string,
   intervals: IIntervals[],
   type: TypeRules,
-  date: string,
+  date: string | null,
   daysOfWeek: DaysOfWeek[] | null,
 }
 

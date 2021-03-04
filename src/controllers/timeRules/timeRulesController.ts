@@ -2,7 +2,7 @@ import { Controller } from '../../decorators/controller';
 import { Get, Post, Delete } from '../../decorators/methods';
 import { Request, Response } from 'express';
 import TimeRulesModel, { ITimeRules } from '../../models/timeRules/timeRules';
-import CheckTimeConflict from '../../models/timeRules/checkTimeConflicts';
+import { CheckTimeConflict } from './checkTimeConflicts';
 
 @Controller('/rules')
 export default class TimeRulesController {
@@ -22,15 +22,15 @@ export default class TimeRulesController {
         const conflicted = this.checkTimeConflict.check(rules, rule);
 
         if(conflicted) {
-          return res.json({ message: "Your time rule generate a conflict with a existing rule" }).sendStatus(409);
+          res.json({ message: "Your time rule generate a conflict with a existing rule" }).sendStatus(409);
         }
 
         const ruleId = await this.timeRulesModel.inserTimeRule({...rule});
-        return res.json({ id: ruleId });          
+        res.json({ id: ruleId });
       });
 
     } catch (error) {
-      return res.send('Bad request').sendStatus(400);  
+      res.send('Bad request').sendStatus(400);
     }
   }
 
@@ -40,13 +40,13 @@ export default class TimeRulesController {
       const id = req.params.id;
 
       if(!id) {
-        return res.json({ message: "missing param id" }).sendStatus(400);
+        res.json({ message: "missing param id" }).sendStatus(400);
       }
 
       const success = await this.timeRulesModel.deleteTimeRule(id);
       res.json({ success });
     } catch (error) {
-      return res.send('Bad request').sendStatus(400);  
+      res.send('Bad request').sendStatus(400);
     }
   }
 
@@ -62,7 +62,7 @@ export default class TimeRulesController {
     const end = JSON.stringify(req.query.end);
 
     if(!start || !end) {
-      return res.json({ message: "missing param start or end" }).sendStatus(400);
+      res.json({ message: "missing param start or end" }).sendStatus(400);
     }
 
     const availableList = await this.timeRulesModel.listAvailableTimeRules(start, end);

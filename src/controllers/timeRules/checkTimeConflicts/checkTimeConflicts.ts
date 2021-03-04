@@ -1,27 +1,33 @@
 import * as moment from 'moment';
-import { ITimeRules, IIntervals } from "./timeRules";
+import { ITimeRules, IIntervals, TypeRules, DaysOfWeek } from "../../../models/timeRules/timeRules";
 
 export default class CheckTimeConflict {
-  private listOfdaysOfWeek = ["sunday", "monday", "tuesday", "wendnesday", "thursday", "friday", "saturday"];
+  private listOfdaysOfWeek = [
+    DaysOfWeek.sunday,
+    DaysOfWeek.monday,
+    DaysOfWeek.tuesday,
+    DaysOfWeek.wendnesday,
+    DaysOfWeek.thursday,
+    DaysOfWeek.friday,
+    DaysOfWeek.saturday
+  ];
 
   private checkIntervals(rule: ITimeRules, intervals: IIntervals[]): boolean {
-    let hasConflict = false;
-
-    rule.intervals.forEach(registerInterval => {
-      intervals.forEach(interval => {
+    const hasConflict = rule.intervals.map(registerInterval => {
+      return intervals.map(interval => {
         const checkStartInterval = interval.start >= registerInterval.start && interval.start <= registerInterval.end;
         const checkEndInterval = interval.end >= registerInterval.start && interval.end <= registerInterval.end;
 
         if(checkStartInterval || checkEndInterval) {
-          hasConflict = true;
+          return true;
         }
-      });
-    });
+      }).filter(hasConflict => hasConflict)[0];
+    }).filter(hasConflict => hasConflict)[0];
 
-    return hasConflict;
+    return hasConflict ? true : false;
   }
 
-  private checkDaysOfWeek(registeredDaysOfWeek: string[], daysOfWeek: string[]) {
+  private checkDaysOfWeek(registeredDaysOfWeek: DaysOfWeek[], daysOfWeek: DaysOfWeek[]) {
     const hasDayOfWeek = registeredDaysOfWeek.map(registeredDaysOfWeek => 
       !!daysOfWeek.filter(dayOfWeek => registeredDaysOfWeek === dayOfWeek).length
     ).filter(checker => checker);
@@ -30,12 +36,10 @@ export default class CheckTimeConflict {
   }
 
   public check(registeredRules: ITimeRules[], rule: ITimeRules): Boolean {
-    let hasConflict = false;
-
-    registeredRules.forEach(registeredRule => {
+    const hasConflict =registeredRules.map(registeredRule => {
       let shouldCheckUniqueRule = false;
-      const isDailyRule = rule.type === 'daily';
-      const isUniqueRule = rule.type === 'unique';
+      const isDailyRule = rule.type === TypeRules.daily;
+      const isUniqueRule = rule.type === TypeRules.unique;
       const hasSameDaysOfWeek = !!rule.daysOfWeek && !!registeredRule.daysOfWeek &&
         this.checkDaysOfWeek(registeredRule.daysOfWeek, rule.daysOfWeek);
 
@@ -47,11 +51,11 @@ export default class CheckTimeConflict {
       }
 
       if(isDailyRule || shouldCheckUniqueRule || hasSameDaysOfWeek) {
-        hasConflict = this.checkIntervals(registeredRule, rule.intervals);
+        return this.checkIntervals(registeredRule, rule.intervals);
       }
-    });
+    }).filter(hasConflict => hasConflict)[0];
 
-    return hasConflict;
+    return hasConflict ? true : false;
   }
 }
 
