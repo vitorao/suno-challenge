@@ -40,7 +40,7 @@ export default class TimeRulesController {
       const id = req.params.id;
 
       if(!id) {
-        return res.json({ message: "missing param id" }).sendStatus(400);   
+        return res.json({ message: "missing param id" }).sendStatus(400);
       }
 
       const success = await this.timeRulesModel.deleteTimeRule(id);
@@ -57,7 +57,15 @@ export default class TimeRulesController {
   }
 
   @Get('/availables')
-  public listAvailableTimeRules(_req: Request, res: Response) {
-    return res.send('listAvailableTimeRules');
+  public async listAvailableTimeRules(req: Request, res: Response) {
+    const start = JSON.stringify(req.query.start);
+    const end = JSON.stringify(req.query.end);
+
+    if(!start || !end) {
+      return res.json({ message: "missing param start or end" }).sendStatus(400);
+    }
+
+    const availableList = await this.timeRulesModel.listAvailableTimeRules(start, end);
+    res.json(availableList);
   }
 }
