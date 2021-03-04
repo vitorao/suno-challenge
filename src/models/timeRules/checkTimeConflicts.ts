@@ -1,6 +1,8 @@
+import * as moment from 'moment';
 import { ITimeRules, IIntervals } from "./timeRules";
 
 export default class CheckTimeConflict {
+  private listOfdaysOfWeek = ["sunday", "monday", "tuesday", "wendnesday", "thursday", "friday", "saturday"];
 
   private checkIntervals(rule: ITimeRules, intervals: IIntervals[]): boolean {
     let hasConflict = false;
@@ -31,13 +33,20 @@ export default class CheckTimeConflict {
     let hasConflict = false;
 
     registeredRules.forEach(registeredRule => {
-      const isDailyRule = registeredRule.type === 'daily';
-      const isSameDay = registeredRule.type === 'unique' && rule.date === registeredRule.date;
-      const shouldCheckDaysOfWeek = registeredRule.type === 'weekly' &&
-        !!rule.daysOfWeek && !!registeredRule.daysOfWeek &&
+      let shouldCheckUniqueRule = false;
+      const isDailyRule = rule.type === 'daily';
+      const isUniqueRule = rule.type === 'unique';
+      const hasSameDaysOfWeek = !!rule.daysOfWeek && !!registeredRule.daysOfWeek &&
         this.checkDaysOfWeek(registeredRule.daysOfWeek, rule.daysOfWeek);
 
-      if(isDailyRule || isSameDay || shouldCheckDaysOfWeek) {
+      if(isUniqueRule && registeredRule.daysOfWeek) {
+        const weekday = moment(rule.date, "DD-MM-YYYY").weekday();
+        shouldCheckUniqueRule = this.checkDaysOfWeek(registeredRule.daysOfWeek, [this.listOfdaysOfWeek[weekday]])
+      } else if (rule.date === registeredRule.date) {
+        shouldCheckUniqueRule = true;
+      }
+
+      if(isDailyRule || shouldCheckUniqueRule || hasSameDaysOfWeek) {
         hasConflict = this.checkIntervals(registeredRule, rule.intervals);
       }
     });

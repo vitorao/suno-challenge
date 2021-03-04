@@ -58,7 +58,7 @@ export default class TimeRulesModel {
       .map((rule, index) => ruleId === rule.id ? index : null)
       .filter(index => index || index === 0)[0];
 
-    if(ruleIndex) {
+    if(ruleIndex || ruleIndex === 0) {
       databaseValues.rules.splice(ruleIndex, 1);
       await this.updateTimeRules(databaseValues.rules);
       return true;
