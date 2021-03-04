@@ -20,17 +20,16 @@ export default class TimeRulesController {
       requestData.forEach(async (rule: ITimeRules) => {
         const { rules } = await this.timeRulesModel.getFileData();
         const conflicted = this.checkTimeConflict.check(rules, rule);
-
         if(conflicted) {
-          res.json({ message: "Your time rule generate a conflict with a existing rule" }).sendStatus(409);
+          return res.status(409).json({ message: "Your time rule generate a conflict with a existing rule" });
         }
 
         const ruleId = await this.timeRulesModel.inserTimeRule({...rule});
-        res.json({ id: ruleId });
+        return res.json({ id: ruleId });
       });
 
     } catch (error) {
-      res.send('Bad request').sendStatus(400);
+      return res.status(400).send('Bad request');
     }
   }
 
@@ -40,20 +39,20 @@ export default class TimeRulesController {
       const id = req.params.id;
 
       if(!id) {
-        res.json({ message: "missing param id" }).sendStatus(400);
+        return res.status(400).json({ message: "missing param id" });
       }
 
       const success = await this.timeRulesModel.deleteTimeRule(id);
-      res.json({ success });
+      return res.json({ success });
     } catch (error) {
-      res.send('Bad request').sendStatus(400);
+      return res.status(400).send('Bad request');
     }
   }
 
   @Get('/')
   public async listAllTimeRules(_req: Request, res: Response) {
     const rules = await this.timeRulesModel.listAllTimeRules();
-    res.json(rules);
+    return res.json(rules);
   }
 
   @Get('/availables')
@@ -62,10 +61,10 @@ export default class TimeRulesController {
     const end = JSON.stringify(req.query.end);
 
     if(!start || !end) {
-      res.json({ message: "missing param start or end" }).sendStatus(400);
+      return res.status(400).json({ message: "missing param start or end" });
     }
 
     const availableList = await this.timeRulesModel.listAvailableTimeRules(start, end);
-    res.json(availableList);
+    return res.json(availableList);
   }
 }

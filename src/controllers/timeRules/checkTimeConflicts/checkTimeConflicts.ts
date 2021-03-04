@@ -36,7 +36,7 @@ export default class CheckTimeConflict {
   }
 
   public check(registeredRules: ITimeRules[], rule: ITimeRules): Boolean {
-    const hasConflict =registeredRules.map(registeredRule => {
+    const hasConflict = registeredRules.map(registeredRule => {
       let shouldCheckUniqueRule = false;
       const isDailyRule = rule.type === TypeRules.daily;
       const isUniqueRule = rule.type === TypeRules.unique;
@@ -46,7 +46,7 @@ export default class CheckTimeConflict {
       if(isUniqueRule && registeredRule.daysOfWeek) {
         const weekday = moment(rule.date, "DD-MM-YYYY").weekday();
         shouldCheckUniqueRule = this.checkDaysOfWeek(registeredRule.daysOfWeek, [this.listOfdaysOfWeek[weekday]])
-      } else if (rule.date === registeredRule.date) {
+      } else if (rule.date === registeredRule.date || registeredRule.type == TypeRules.daily) {
         shouldCheckUniqueRule = true;
       }
 

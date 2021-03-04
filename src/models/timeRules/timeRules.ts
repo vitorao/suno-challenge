@@ -43,7 +43,7 @@ export default class TimeRulesModel {
     return timeRuleId;
   }
 
-  private async updateTimeRules(data: ITimeRules[]) {
+  async updateTimeRules(data: ITimeRules[]) {
     fs.writeFile(this.databaseFileName, JSON.stringify({rules: data}), err => {
       if(err) throw new Error('Error on save file')
     });
