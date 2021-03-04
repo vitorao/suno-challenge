@@ -117,9 +117,9 @@ export default class TimeRulesModel {
 
     for(let n = 0; n < daysBetweenDays; n++) {
       const nextDay = moment(start, "DD-MM-YYYY").add(n, 'days').format("DD-MM-YYYY");
-      const weekday: TypeRules = moment(nextDay, "DD-MM-YYYY").weekday();
-      const hasDayOfWeek = rule.daysOfWeek && !!rule.daysOfWeek.filter(day => 
-        this.listOfdaysOfWeek[weekday] === day).length; 
+      const weekday = moment(nextDay, "DD-MM-YYYY").weekday();
+      const hasDayOfWeek = rule.daysOfWeek && !!rule.daysOfWeek.filter(day =>
+        this.listOfdaysOfWeek[weekday] === day).length;
 
       if(hasDayOfWeek) {
         timeRulesWeekly.push({
@@ -133,12 +133,12 @@ export default class TimeRulesModel {
   }
 
   public async listAvailableTimeRules(start: string, end: string): Promise<ITimeRulesResponse[]> {
-    const databaseValues = await this.getFileData();
+    const databaseValues: ITimeRules[] = (await this.getFileData()).rules;
     let timeRulesResponse: any = [];
     const momentStart = moment(start, "DD-MM-YYYY");
     const momentEnd = moment(end, "DD-MM-YYYY");
 
-    databaseValues.rules.map(rule => {
+    databaseValues.map(rule => {
       switch(rule.type) {
         case TypeRules.unique:
           const uniqueList = this.listUniqueRule(rule, momentStart, momentEnd);
@@ -165,9 +165,9 @@ export interface IIntervals {
 }
 
 export enum TypeRules {
-  weekly,
-  daily,
-  unique
+  weekly = 'weekly',
+  daily = 'daily',
+  unique = 'unique'
 };
 
 export enum DaysOfWeek {
