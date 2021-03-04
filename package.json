@@ -4,8 +4,8 @@
   "description": "",
   "main": "src/app.ts",
   "scripts": {
-    "dev": "ts-node -r dotenv/config -P tsconfig.json src/server.ts",
-    "start": "node -r dotenv/config build/server.js",
+    "dev": "PORT=8080 ts-node -r dotenv/config -P tsconfig.json src/server.ts",
+    "start": "PORT=8080 node -r dotenv/config build/server.js",
     "test": "PORT=8080 jest"
   },
   "repository": {
